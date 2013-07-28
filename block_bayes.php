@@ -33,6 +33,9 @@ class block_bayes extends block_base
         if ($this->content !== null)
             return $this->content;
 
+        if (!has_capability('moodle/grade:viewall', context_course::instance($this->page->course->id)))
+            return $this->content = '';
+
         $html = html_writer::start_tag('ul');
         $html .= html_writer::tag('li',
             $OUTPUT->action_link(
