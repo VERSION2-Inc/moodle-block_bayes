@@ -68,7 +68,7 @@ foreach ($DB->get_records('block_bayes_levels') as $level) {
     $table->data[] = [
         html_input_tag('text', "fullname[$level->id]", $level->fullname),
         html_input_tag('text', "shortname[$level->id]", $level->name),
-        html_input_tag('text', "probability[$level->id]", $level->probability),
+        html_input_tag('text', "probability[$level->id]", sprintf('%.2f', $level->probability)),
         $OUTPUT->action_icon(
             new moodle_url($PAGE->url, [ 'delete' => $level->id, 'sesskey' => sesskey() ]),
             new pix_icon('t/delete', '')
