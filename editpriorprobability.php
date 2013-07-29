@@ -11,15 +11,18 @@ $course = $DB->get_record('course', [ 'id' => required_param('id', PARAM_INT) ],
 require_login($course);
 require_capability('moodle/grade:viewall', context_course::instance($course->id));
 
-$courseshortname = format_string($course->shortname, true, [ 'context' => context_course::instance($course->id) ]);
-$strtitle = get_string('pluginname', 'block_bayes');
+$strpluginname = get_string('pluginname', 'block_bayes');
+$strpagetitle = get_string('editpriorprobability', 'block_bayes');
 
-$PAGE->set_url('/blocks/bayes/view.php', [ 'id' => $course->id ]);
-$PAGE->set_title($courseshortname . ': ' . $strtitle);
+$PAGE->set_url('/blocks/bayes/editpriorprobability.php', [ 'id' => $course->id ]);
+$PAGE->set_title($strpluginname . ': ' . $strpagetitle);
 $PAGE->set_heading($course->fullname);
-$PAGE->navbar->add($strtitle);
+$PAGE->navbar->add($strpluginname);
+$PAGE->navbar->add($strpagetitle);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($strtitle);
+echo $OUTPUT->heading($strpagetitle);
+
+
 
 echo $OUTPUT->footer();

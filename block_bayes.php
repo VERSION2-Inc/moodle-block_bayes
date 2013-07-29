@@ -36,11 +36,12 @@ class block_bayes extends block_base
         if (!has_capability('moodle/grade:viewall', context_course::instance($this->page->course->id)))
             return $this->content = '';
 
+        $editicon = $OUTPUT->pix_icon('i/edit', '', 'moodle', [ 'class' => 'icon' ]);
         $html = html_writer::start_tag('ul');
         $html .= html_writer::tag('li',
             $OUTPUT->action_link(
-                new moodle_url('/blocks/bayes/view.php', [ 'id' => $this->page->course->id ]),
-                $OUTPUT->pix_icon('i/grades', '', 'moodle', [ 'class' => 'icon' ]) . get_string('view', __CLASS__)
+                new moodle_url('/blocks/bayes/editpriorprobability.php', [ 'id' => $this->page->course->id ]),
+                $editicon . get_string('editpriorprobability', __CLASS__)
                 )
             );
         $html .= html_writer::end_tag('ul');
