@@ -89,7 +89,7 @@ echo html_writer::table($table);
 echo html_writer::tag('div', html_input_tag('submit', 'update', get_string('savechanges')));
 echo html_writer::end_tag('form');
 
-$generatecsvform = new generate_csv_form(null, (object)['id' => $blockid]);
+$generatecsvform = new generate_csv_form(new moodle_url('/blocks/bayes/generateemptycsv.php'), (object)['course' => $course->id]);
 $generatecsvform->display();
 
 echo $OUTPUT->footer();

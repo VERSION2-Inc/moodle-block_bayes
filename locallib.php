@@ -4,6 +4,7 @@ namespace bayesns;
 defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->libdir . '/formslib.php';
+require_once $CFG->libdir . '/csvlib.class.php';
 
 class bayes {
 	const COMPONENT = 'block_bayes';
@@ -19,12 +20,33 @@ class bayes {
 	}
 }
 
+class page {
+	public function __construct() {
+		if ($courseid = required_param('course', PARAM_INT)) {
+			require_login($courseid);
+		}
+	}
+}
+
+class encoded_csv_writer extends \csv_export_writer {
+	public $encoding;
+
+	public function add_data($row) {
+		if ($this->encoding && $this->encoding != 'UTF-8') {
+			foreach ($row as &$item) {
+				$item = iconv('UTF-8', $this->encoding, $item);
+			}
+		}
+		parent::add_data($row);
+	}
+}
+
 class generate_csv_form extends \moodleform {
 	protected function definition() {
 		$f = $this->_form;
 
-		$f->addElement('hidden', 'id', $this->_customdata->id);
-		$f->setType('id', PARAM_INT);
+		$f->addElement('hidden', 'course', $this->_customdata->course);
+		$f->setType('course', PARAM_INT);
 
 		$f->addElement('header', 'generateemptycsv', bayes::str('generateemptycsv'));
 

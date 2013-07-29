@@ -1,30 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/bayes/db" VERSION="2013060802" COMMENT="XMLDB file for Moodle blocks/bayes"
+<XMLDB PATH="blocks/bayes/db" VERSION="20130730" COMMENT="ベイズクラス分けブロック"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="block_bayes_levels" COMMENT="table to store bayes levels" NEXT="block_bayes_likelihoods">
+    <TABLE NAME="block_bayes_levels" COMMENT="レベル">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="fullname"/>
-        <FIELD NAME="fullname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="probability"/>
-        <FIELD NAME="probability" TYPE="number" LENGTH="10" DECIMALS="5" NOTNULL="true" SEQUENCE="false" PREVIOUS="fullname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="probability" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="block_bayes_likelihoods" COMMENT="table to store bayes likelihoods" PREVIOUS="block_bayes_levels">
+    <TABLE NAME="block_bayes_likelihoods" COMMENT="尤度">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="levelid"/>
-        <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="levelid" NEXT="likelihood"/>
-        <FIELD NAME="likelihood" TYPE="number" LENGTH="10" DECIMALS="5" NOTNULL="true" SEQUENCE="false" PREVIOUS="questionid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="likelihood" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="levelid" TYPE="foreign" FIELDS="levelid" REFTABLE="block_bayes_levels" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="questionid" UNIQUE="false" FIELDS="questionid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
