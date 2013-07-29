@@ -11,3 +11,9 @@ $string['result'] = 'Result';
 $string['levelfullname'] = 'Level name';
 $string['levelshortname'] = 'Short name';
 $string['priorprobability'] = 'Prior probability';
+
+$string['generateemptycsv'] = '空のCSVファイルを生成';
+$string['encoding'] = '文字コード';
+$string['cp932'] = 'シフトJIS (Excel用)';
+$string['downloademptycsv'] = '空のCSVファイルをダウンロード';
+$string['utf8'] = 'UTF-8';

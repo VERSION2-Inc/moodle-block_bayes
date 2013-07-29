@@ -1,12 +1,16 @@
 <?php
+use bayesns\bayes;
+use bayesns\generate_csv_form;
 
 require_once __DIR__.'/../../config.php';
+require_once $CFG->dirroot . '/blocks/bayes/locallib.php';
 
 /* @var $DB moodle_database */
 /* @var $USER object */
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
+$blockid = required_param('id', PARAM_INT);
 $course = $DB->get_record('course', [ 'id' => required_param('id', PARAM_INT) ], '*', MUST_EXIST);
 require_login($course);
 require_capability('moodle/grade:viewall', context_course::instance($course->id));
@@ -84,5 +88,8 @@ $table->data[] = [
 echo html_writer::table($table);
 echo html_writer::tag('div', html_input_tag('submit', 'update', get_string('savechanges')));
 echo html_writer::end_tag('form');
+
+$generatecsvform = new generate_csv_form(null, (object)['id' => $blockid]);
+$generatecsvform->display();
 
 echo $OUTPUT->footer();
