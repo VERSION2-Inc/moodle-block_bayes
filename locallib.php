@@ -18,11 +18,45 @@ class bayes {
 	public static function str($identifier, $a = null) {
 		return get_string($identifier, self::COMPONENT, $a);
 	}
+
+	/**
+	 *
+	 * @return array
+	 */
+	public static function get_encodings() {
+		return [
+			'CP932' => self::str('cp932'),
+			'UTF-8' => self::str('utf8')
+		];
+	}
 }
 
 class page {
-	public function __construct() {
-		require_login(SITEID);
+	/**
+	 *
+	 * @var \core_renderer
+	 */
+	protected $output;
+	protected $courseid;
+
+	/**
+	 *
+	 * @param string $url
+	 */
+	public function __construct($url) {
+		global $OUTPUT, $PAGE;
+
+		$this->output = $OUTPUT;
+
+		if ($this->courseid = optional_param('course', 0, PARAM_INT)) {
+			require_login($this->courseid);
+		} else {
+			require_login(SITEID);
+		}
+
+		$PAGE->set_url($url);
+		$PAGE->set_title(bayes::str('pluginname'));
+		$PAGE->set_heading(bayes::str('pluginname'));
 	}
 }
 
@@ -54,10 +88,7 @@ class generate_csv_form extends \moodleform {
 								}, $vals)));
 		$f->setDefault('numquestions', 100);
 
-		$f->addElement('select', 'encoding', bayes::str('encoding'), [
-			'CP932' => bayes::str('cp932'),
-			'UTF-8' => bayes::str('utf8')
-		]);
+		$f->addElement('select', 'encoding', bayes::str('encoding'), bayes::get_encodings());
 
 		$this->add_action_buttons(false, bayes::str('downloademptycsv'));
 	}

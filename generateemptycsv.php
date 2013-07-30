@@ -36,5 +36,5 @@ class page_generate_empty_csv extends page {
 	}
 }
 
-$page = new page_generate_empty_csv();
+$page = new page_generate_empty_csv('/blocks/bayes/generateemptycsv.php');
 $page->execute();
