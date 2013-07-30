@@ -21,15 +21,6 @@ class page_quiz_results extends page {
 		$cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
 		$course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
 
-// 		$options = new \quiz_overview_options('', $quiz, $cm, $course);
-
-// 		$table = new \quiz_overview_table($quiz, \context_course::instance($quiz->course),
-// 				'', $options, null, null, null, null);
-// 		list($currentgroup, $students, $groupstudents, $allowed) =
-// 		$this->init('responses', 'quiz_responses_settings_form', $quiz, $cm, $course);
-
-// 		$table->out(30, true);
-
 		$report = new \quiz_bayes_report();
 		$report->display($cm, $course, $quiz);
 

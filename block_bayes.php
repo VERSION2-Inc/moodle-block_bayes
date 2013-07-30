@@ -1,6 +1,8 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
+use bayesns\bayes;
+
 class block_bayes extends block_list {
 
 	public function init() {
@@ -33,6 +35,8 @@ class block_bayes extends block_list {
 			return null;
 		}
 
+		require_once $CFG->dirroot . '/blocks/bayes/locallib.php';
+
 		$courseid = $COURSE->id;
 
 		if ($this->content !== null) {
@@ -57,15 +61,22 @@ class block_bayes extends block_list {
 										'id' => $this->page->course->id
 								]), $editicon . get_string('editpriorprobability', __CLASS__));
 
+		$this->content->items[] = '尤度設定';
 		$quizzes = $DB->get_records_menu('quiz', ['course' => $courseid],
 				'name', 'id, name');
 		$this->content->items[] = $OUTPUT->single_select(
 				new moodle_url('/blocks/bayes/likelihoods.php', ['course' => $courseid]), 'quiz', $quizzes);
 
 		$this->content->items[] = $OUTPUT->action_link(
-				new moodle_url('/blocks/bayes/uploadcsv.php', ['course' => $courseid]), 'uploadcsv');
+				new moodle_url('/blocks/bayes/uploadcsv.php', ['course' => $courseid]), bayes::str('uploadcsv'));
 
-// 		$this->page->requires->css('/blocks/bayes/styles.css');
+		$this->content->items[] = 'クラス分け計算';
+		$quizzes = $DB->get_records_menu('quiz', ['course' => $courseid],
+				'name', 'id, name');
+		$this->content->items[] = $OUTPUT->single_select(
+				new moodle_url('/blocks/bayes/quizresults.php', ['course' => $courseid]), 'quiz', $quizzes);
+
+		// 		$this->page->requires->css('/blocks/bayes/styles.css');
 
 		return $this->content;
 // 		return $this->content = (object)[

@@ -1,6 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
+require_once $CFG->dirroot . '/blocks/bayes/locallib.php';
 require_once $CFG->dirroot . '/mod/quiz/report/reportlib.php';
 require_once $CFG->dirroot . '/mod/quiz/report/default.php';
 require_once $CFG->dirroot . '/mod/quiz/report/attemptsreport.php';
@@ -26,6 +27,9 @@ class quiz_bayes_report extends quiz_attempts_report {
 
 		$columns = [];
 		$headers = [];
+
+		$columns[] = 'classify';
+		$headers[] = 'クラス分け';
 
 		$this->add_user_columns($table, $columns, $headers);
 		$this->add_state_column($columns, $headers);
