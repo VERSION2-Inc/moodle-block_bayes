@@ -3,7 +3,6 @@ namespace bayesns;
 
 require_once '../../config.php';
 require_once $CFG->dirroot . '/blocks/bayes/locallib.php';
-require_once $CFG->libdir . '/csvlib.class.php';
 
 class page_generate_empty_csv extends page {
 	public function execute() {

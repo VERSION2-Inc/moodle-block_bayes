@@ -20,3 +20,7 @@ $string['utf8'] = 'UTF-8';
 $string['xquestions'] = '{$a} 問';
 $string['numquestions'] = '問題数';
 $string['upload'] = 'アップロード';
+$string['uploadcsv'] = 'CSVファイルをアップロードする';
+$string['bayes:classify'] = 'クラス分けを行う';
+$string['questionnum'] = 'Q';
+$string['managelikelihoods'] = '尤度設定';

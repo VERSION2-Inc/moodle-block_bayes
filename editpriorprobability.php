@@ -1,9 +1,9 @@
 <?php
-use bayesns\bayes;
-use bayesns\generate_csv_form;
-
 require_once __DIR__.'/../../config.php';
 require_once $CFG->dirroot . '/blocks/bayes/locallib.php';
+
+use bayesns\bayes;
+use bayesns\generate_csv_form;
 
 /* @var $DB moodle_database */
 /* @var $USER object */
@@ -72,7 +72,7 @@ foreach ($DB->get_records('block_bayes_levels') as $level) {
     $table->data[] = [
         html_input_tag('text', "fullname[$level->id]", $level->fullname),
         html_input_tag('text', "shortname[$level->id]", $level->name),
-        html_input_tag('text', "probability[$level->id]", sprintf('%.2f', $level->probability)),
+        html_input_tag('text', "probability[$level->id]", bayes::format_float($level->probability)),
         $OUTPUT->action_icon(
             new moodle_url($PAGE->url, [ 'delete' => $level->id, 'sesskey' => sesskey() ]),
             new pix_icon('t/delete', '')

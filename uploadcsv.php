@@ -19,6 +19,7 @@ class page_upload_csv extends page {
 
 		if ($this->uploadform->is_submitted()) {
 			$this->read_csv();
+			exit();
 		}
 		$this->view();
 	}
@@ -32,7 +33,45 @@ class page_upload_csv extends page {
 	}
 
 	private function read_csv() {
+		global $DB;
 
+		$data = $this->uploadform->get_data();
+
+		$content = $this->uploadform->get_file_content('file');
+		$reader = new \csv_import_reader(\csv_import_reader::get_new_iid('block_bayes'), 'block_bayes');
+		if (!$reader->load_csv_content($content, $data->encoding, 'comma')) {
+			print_error('csvhaserror', bayes::COMPONENT, '', null, $reader->get_error());
+		}
+
+		$levelids = [];
+		$levels = $DB->get_records('block_bayes_levels');
+		foreach ($levels as $level) {
+			$levelids[bayes::get_level_key($level->name)] = $level->id;
+			$levelids[bayes::get_level_key($level->fullname)] = $level->id;
+		}
+
+		$columnmap = [];
+		$columns = $reader->get_columns();
+		for ($i = 1; $i < count($columns); $i++) {
+			$pattern = bayes::get_level_key($columns[$i]);
+			if (isset($levelids[$pattern])) {
+				$columnmap[$i] = $levelids[$pattern];
+			}
+		}
+
+		$questions = bayes::get_quiz_question_ids($data->quiz);
+
+		$reader->init();
+		while ($row = $reader->next()) {
+			$questionnum = $row[0] - 1;
+			if (!isset($questions[$questionnum])) {
+				continue;
+			}
+
+			foreach ($columnmap as $i => $levelid) {
+				bayes::set_likelihood($questions[$questionnum], $levelid, $row[$i]);
+			}
+		}
 	}
 }
 
@@ -41,6 +80,10 @@ class form_upload_csv extends \moodleform {
 		global $DB;
 
 		$f = $this->_form;
+		$courseid = $this->_customdata->courseid;
+
+		$f->addElement('hidden', 'course', $courseid);
+		$f->setType('course', PARAM_INT);
 
 		$f->addElement('header', 'upload', bayes::str('upload'));
 
@@ -52,7 +95,7 @@ class form_upload_csv extends \moodleform {
 		$f->addElement('select', 'quiz', get_string('modulename', 'quiz'), $quizzes);
 		$f->addElement('select', 'encoding', bayes::str('encoding'), bayes::get_encodings());
 
-		$this->add_action_buttons();
+		$this->add_action_buttons(false, bayes::str('uploadcsv'));
 	}
 }
 

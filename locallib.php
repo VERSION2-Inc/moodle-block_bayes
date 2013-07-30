@@ -9,6 +9,9 @@ require_once $CFG->libdir . '/csvlib.class.php';
 class bayes {
 	const COMPONENT = 'block_bayes';
 
+	const TABLE_LEVELS = 'block_bayes_levels';
+	const TABLE_LIKELIHOODS = 'block_bayes_likelihoods';
+
 	/**
 	 *
 	 * @param string $identifier
@@ -29,15 +32,103 @@ class bayes {
 			'UTF-8' => self::str('utf8')
 		];
 	}
+
+	/**
+	 *
+	 * @param string $name
+	 * @return string
+	 */
+	public static function get_level_key($name) {
+		$name = mb_convert_kana($name, 'asKV', 'UTF-8');
+		$name = preg_replace('/\s/', '', $name);
+		$name = mb_strtolower($name);
+		return $name;
+	}
+
+	/**
+	 *
+	 * @param int $questionid
+	 * @param int $levelid
+	 * @param float $likelihood
+	 */
+	public static function set_likelihood($questionid, $levelid, $likelihood) {
+		global $DB;
+
+		if ($row = $DB->get_record(self::TABLE_LIKELIHOODS, compact('questionid', 'levelid'))) {
+			$row->likelihood = $likelihood;
+			$DB->update_record(self::TABLE_LIKELIHOODS, $row);
+		} else {
+			$DB->insert_record(self::TABLE_LIKELIHOODS, (object)compact('questionid', 'levelid', 'likelihood'));
+		}
+	}
+
+	/**
+	 *
+	 * @return \stdClass[]
+	 */
+	public static function get_levels() {
+		global $DB;
+		return $DB->get_records(self::TABLE_LEVELS);
+	}
+
+	/**
+	 *
+	 * @param int $id
+	 * @return int[]
+	 */
+	public static function get_quiz_question_ids($id) {
+		global $DB;
+		$quiz = $DB->get_record('quiz', compact('id'), 'id, questions', MUST_EXIST);
+		return array_merge(array_filter(explode(',', $quiz->questions)));
+	}
+
+	/**
+	 *
+	 * @param int $questionid
+	 * @param int $levelid
+	 * @return float
+	 */
+	public static function get_likelihood($questionid, $levelid) {
+		global $DB;
+		return $DB->get_field(self::TABLE_LIKELIHOODS, 'likelihood', compact('questionid', 'levelid'));
+	}
+
+	/**
+	 *
+	 * @return float[][]
+	 */
+	public static function get_likelihoods() {
+		global $DB;
+		$rows = $DB->get_records(self::TABLE_LIKELIHOODS);
+		$likelihoods = [];
+		foreach ($rows as $row) {
+			$likelihoods[$row->questionid][$row->levelid] = $row->likelihood;
+		}
+		return $likelihoods;
+	}
+
+	/**
+	 *
+	 * @param float $value
+	 * @return string
+	 */
+	public static function format_float($value) {
+		return sprintf('%.2f', $value);
+	}
 }
 
-class page {
+abstract class page {
 	/**
 	 *
 	 * @var \core_renderer
 	 */
 	protected $output;
+	/**
+	 *
+	 * @var int
+	 */
 	protected $courseid;
+	protected $url;
 
 	/**
 	 *
@@ -46,6 +137,7 @@ class page {
 	public function __construct($url) {
 		global $OUTPUT, $PAGE;
 
+		$this->url = $url;
 		$this->output = $OUTPUT;
 
 		if ($this->courseid = optional_param('course', 0, PARAM_INT)) {
@@ -58,6 +150,8 @@ class page {
 		$PAGE->set_title(bayes::str('pluginname'));
 		$PAGE->set_heading(bayes::str('pluginname'));
 	}
+
+	public abstract function execute();
 }
 
 class encoded_csv_writer extends \csv_export_writer {
