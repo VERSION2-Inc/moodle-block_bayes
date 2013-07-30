@@ -22,9 +22,7 @@ class bayes {
 
 class page {
 	public function __construct() {
-		if ($courseid = required_param('course', PARAM_INT)) {
-			require_login($courseid);
-		}
+		require_login(SITEID);
 	}
 }
 
@@ -45,16 +43,21 @@ class generate_csv_form extends \moodleform {
 	protected function definition() {
 		$f = $this->_form;
 
-		$f->addElement('hidden', 'course', $this->_customdata->course);
-		$f->setType('course', PARAM_INT);
-
 		$f->addElement('header', 'generateemptycsv', bayes::str('generateemptycsv'));
 
-		$opts = [
+		$vals = range(10, 200, 10);
+		$f->addElement('select', 'numquestions', bayes::str('numquestions'),
+				array_combine($vals,
+						array_map(
+								function ($val) {
+									return bayes::str('xquestions', $val);
+								}, $vals)));
+		$f->setDefault('numquestions', 100);
+
+		$f->addElement('select', 'encoding', bayes::str('encoding'), [
 			'CP932' => bayes::str('cp932'),
 			'UTF-8' => bayes::str('utf8')
-		];
-		$f->addElement('select', 'encoding', bayes::str('encoding'), $opts);
+		]);
 
 		$this->add_action_buttons(false, bayes::str('downloademptycsv'));
 	}

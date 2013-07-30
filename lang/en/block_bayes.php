@@ -17,3 +17,5 @@ $string['encoding'] = '文字コード';
 $string['cp932'] = 'シフトJIS (Excel用)';
 $string['downloademptycsv'] = '空のCSVファイルをダウンロード';
 $string['utf8'] = 'UTF-8';
+$string['xquestions'] = '{$a} 問';
+$string['numquestions'] = '問題数';
