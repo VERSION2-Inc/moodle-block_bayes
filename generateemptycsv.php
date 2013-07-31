@@ -28,7 +28,11 @@ class page_generate_empty_csv extends page {
 		$csv->add_data($row);
 
 		for ($q = 1; $q <= $data->numquestions; $q++) {
-			$csv->add_data([$q]);
+			$row = [$q];
+			foreach ($levels as $level) {
+				$row[] = '';
+			}
+			$csv->add_data($row);
 		}
 
 		$csv->download_file();
