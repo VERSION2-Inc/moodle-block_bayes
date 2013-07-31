@@ -12,7 +12,9 @@ class page_quiz_results extends page {
 	}
 
 	private function view() {
-		global $DB;
+		global $DB, $PAGE;
+
+		$PAGE->requires->js_init_call('M.block_bayes.quiz_results_init');
 
 		$head = bayes::str('quizresults');
 		$this->add_navbar($head);

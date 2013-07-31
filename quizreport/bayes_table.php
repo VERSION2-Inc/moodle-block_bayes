@@ -23,6 +23,8 @@ class quiz_bayes_table extends quiz_attempts_report_table {
 	}
 
 	public function col_classify($attempt) {
+		global $OUTPUT;
+
 		$levels = bayes::get_levels();
 		$likelihoods = bayes::get_likelihoods();
 
@@ -40,8 +42,14 @@ class quiz_bayes_table extends quiz_attempts_report_table {
 
 		$debug = [];
 
+		$debugrow = ['レベル'];
+		foreach ($levels as $level) {
+			$debugrow[] = $level->fullname;
+		}
+		$debug[] = $debugrow;
+
 		foreach ($steps as $questionnum => $step) {
-			$debugrow = [];
+			$debugrow = [$questionnum];
 			foreach ($levels as $level) {
 				if ($step->fraction == 1) {
 					$probability = $level->probability;
@@ -56,23 +64,29 @@ class quiz_bayes_table extends quiz_attempts_report_table {
 			$debug[] = $debugrow;
 		}
 
-		$debugrow = [];
+		$debugrow = ['積'];
+
 		foreach ($levels as $level) {
 			$debugrow[] = $probrates[$level->id];
-			$debugtitlerow[] = $level->fullname;
 		}
 		$debug[] = $debugrow;
-		$debug[] = $debugtitlerow;
 
 		arsort($probrates);
 
 		$level = $levels[key($probrates)];
 
-// 		$table = new html_table();
-// 		$table->data = $debug;
-// 		echo html_writer::table($table);
+		$table = new html_table();
+		$table->id = "debug_$attempt->usageid";
+		$table->attributes = ['style' => 'display: none'];
+		$table->data = $debug;
 
-		return $level->fullname;
+		$togglebutton = $OUTPUT->action_icon('#', new pix_icon('t/switch', '詳細'), null, [
+				'class' => 'action-icon debug-toggle',
+				'data-usageid' => $attempt->usageid
+		], true);
+
+// 		return $level->fullname;
+		return $level->fullname.'<br>'.$togglebutton.html_writer::table($table);
 	}
 
 	protected function requires_latest_steps_loaded() {
