@@ -68,9 +68,9 @@ class quiz_bayes_table extends quiz_attempts_report_table {
 
 		$level = $levels[key($probrates)];
 
-		$table = new html_table();
-		$table->data = $debug;
-		echo html_writer::table($table);
+// 		$table = new html_table();
+// 		$table->data = $debug;
+// 		echo html_writer::table($table);
 
 		return $level->fullname;
 	}

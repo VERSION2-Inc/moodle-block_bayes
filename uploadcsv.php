@@ -72,6 +72,8 @@ class page_upload_csv extends page {
 				bayes::set_likelihood($questions[$questionnum], $levelid, $row[$i]);
 			}
 		}
+
+		redirect(new \moodle_url('/blocks/bayes/likelihoods.php', ['course' => $this->courseid, 'quiz' => $data->quiz]));
 	}
 }
 

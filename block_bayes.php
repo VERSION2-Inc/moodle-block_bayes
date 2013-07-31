@@ -29,7 +29,7 @@ class block_bayes extends block_list {
 	 * @return stdClass string
 	 */
 	public function get_content() {
-		global $DB, $OUTPUT, $COURSE;
+		global $CFG, $DB, $OUTPUT, $COURSE;
 
 		if (!has_capability('block/bayes:classify', context_block::instance($this->instance->id))) {
 			return null;
