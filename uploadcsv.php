@@ -25,7 +25,11 @@ class page_upload_csv extends page {
 	}
 
 	private function view() {
+		$head = bayes::str('uploadcsv');
+		$this->add_navbar($head);
+
 		echo $this->output->header();
+		echo $this->output->heading($head);
 
 		$this->uploadform->display();
 

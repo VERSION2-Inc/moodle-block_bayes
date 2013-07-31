@@ -31,6 +31,19 @@ if (optional_param('update', null, PARAM_TEXT) and confirm_sesskey()) {
     foreach (array_intersect(array_keys($fullnames), array_keys($shortnames), array_keys($probabilities)) as $id) {
         list ($fullname, $name, $probability) = [ trim($fullnames[$id]), trim($shortnames[$id]), trim($probabilities[$id]) ];
         if (strlen($fullname) != 0 && strlen($name) != 0 && strlen($probability) != 0) {
+        	$levels = bayes::get_levels();
+        	foreach ($levels as $level) {
+        		if ($level->id == $id) {
+        			continue;
+        		}
+        		foreach ([$fullname, $name] as $testname) {
+	        		if (bayes::get_level_key($level->fullname) == bayes::get_level_key($testname)
+	        			|| bayes::get_level_key($level->name) == bayes::get_level_key($testname)) {
+	        			redirect(new moodle_url($PAGE->url, ['error' => bayes::str('conflictinglevelexists', $testname)]));
+	        		}
+        		}
+        	}
+
             if ($record = $DB->get_record('block_bayes_levels', [ 'id' => $id ])) {
                 $record->name        = $name;
                 $record->fullname    = $fullname;
@@ -55,6 +68,8 @@ function html_input_tag($type, $name, $value = '', array $attrs = [])
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strpagetitle);
+
+echo $OUTPUT->error_text(optional_param('error', '', PARAM_TEXT));
 
 echo html_writer::start_tag('form', [ 'action' => $PAGE->url->out_omit_querystring(), 'method' => 'post' ]);
 echo html_writer::start_tag('div', [ 'style' => 'display:none' ]);

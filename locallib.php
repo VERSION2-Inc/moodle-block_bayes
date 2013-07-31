@@ -128,6 +128,10 @@ abstract class page {
 	 * @var int
 	 */
 	protected $courseid;
+	/**
+	 *
+	 * @var string
+	 */
 	protected $url;
 
 	/**
@@ -149,12 +153,26 @@ abstract class page {
 		$PAGE->set_url($url);
 		$PAGE->set_title(bayes::str('pluginname'));
 		$PAGE->set_heading(bayes::str('pluginname'));
+		$this->add_navbar(bayes::str('pluginname'));
 	}
 
 	public abstract function execute();
+
+	/**
+	 *
+	 * @param string $text
+	 */
+	protected function add_navbar($text) {
+		global $PAGE;
+		$PAGE->navbar->add($text);
+	}
 }
 
 class encoded_csv_writer extends \csv_export_writer {
+	/**
+	 *
+	 * @var string
+	 */
 	public $encoding;
 
 	public function add_data($row) {

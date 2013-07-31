@@ -24,3 +24,5 @@ $string['uploadcsv'] = 'CSVファイルをアップロードする';
 $string['bayes:classify'] = 'クラス分けを行う';
 $string['questionnum'] = 'Q';
 $string['managelikelihoods'] = '尤度設定';
+$string['quizresults'] = '小テスト受験結果';
+$string['conflictinglevelexists'] = '\'{$a}\' と区別できない名前が他のレベルに存在します。';

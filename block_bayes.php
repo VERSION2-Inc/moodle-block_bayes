@@ -60,17 +60,22 @@ class block_bayes extends block_list {
 								[
 										'id' => $this->page->course->id
 								]), $editicon . get_string('editpriorprobability', __CLASS__));
+		$this->content->icons[] = '';
 
 		$this->content->items[] = '尤度設定';
+		$this->content->icons[] = $OUTPUT->pix_icon('i/db', '');
 		$quizzes = $DB->get_records_menu('quiz', ['course' => $courseid],
 				'name', 'id, name');
 		$this->content->items[] = $OUTPUT->single_select(
 				new moodle_url('/blocks/bayes/likelihoods.php', ['course' => $courseid]), 'quiz', $quizzes);
+		$this->content->icons[] = '';
 
 		$this->content->items[] = $OUTPUT->action_link(
 				new moodle_url('/blocks/bayes/uploadcsv.php', ['course' => $courseid]), bayes::str('uploadcsv'));
+		$this->content->icons[] = $OUTPUT->pix_icon('i/restore', '');
 
 		$this->content->items[] = 'クラス分け計算';
+		$this->content->icons[] = $OUTPUT->pix_icon('i/group', '');
 		$quizzes = $DB->get_records_menu('quiz', ['course' => $courseid],
 				'name', 'id, name');
 		$this->content->items[] = $OUTPUT->single_select(

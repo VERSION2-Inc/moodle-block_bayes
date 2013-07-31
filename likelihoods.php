@@ -21,7 +21,16 @@ class page_likelihoods extends page {
 	}
 
 	private function view() {
+		global $DB;
+
+		$head = bayes::str('managelikelihoods');
+		$this->add_navbar($head);
+
 		echo $this->output->header();
+		echo $this->output->heading($head);
+
+		echo $this->output->box(get_string('modulename', 'quiz').': '
+				.$DB->get_field('quiz', 'name', ['id' => required_param('quiz', PARAM_INT)], MUST_EXIST));
 
 		$this->editform->display();
 
@@ -60,6 +69,8 @@ class form_edit_likelihoods extends \moodleform {
 
 		$f->addElement('hidden', 'quiz', $quizid);
 		$f->setType('quiz', PARAM_INT);
+
+		$f->addElement('header', 'questions', get_string('questions', 'quiz'));
 
 		$this->add_question_groups($quizid);
 
