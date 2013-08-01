@@ -67,6 +67,7 @@ class page_upload_csv extends page {
 
 		$reader->init();
 		while ($row = $reader->next()) {
+			$row = array_map('trim', $row);
 			$questionnum = $row[0] - 1;
 			if (!isset($questions[$questionnum])) {
 				continue;
