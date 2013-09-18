@@ -2,6 +2,19 @@
 	margin: 0;
 }
 
+.path-blocks-bayes .levelheadercell, .path-blocks-bayes .levelinputcell {
+	width: 4em;
+}
+
+.path-blocks-bayes .levelheadercell {
+	float: left;
+	display: inline;
+	text-align: center;
+	margin-right: 0.2em;
+	border: 1px solid #888;
+	font-weight: bold;
+}
+
 .block_bayes {}
 .block_bayes div.content ul { list-style:none; margin:0; padding:0; }
 .block_bayes div.content ul li { margin:4px 0; }

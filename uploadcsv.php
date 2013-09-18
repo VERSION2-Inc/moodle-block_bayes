@@ -41,6 +41,8 @@ class page_upload_csv extends page {
 
 		$data = $this->uploadform->get_data();
 
+		ini_set('auto_detect_line_endings', true);
+
 		$content = $this->uploadform->get_file_content('file');
 		$reader = new \csv_import_reader(\csv_import_reader::get_new_iid('block_bayes'), 'block_bayes');
 		if (!$reader->load_csv_content($content, $data->encoding, 'comma')) {
@@ -79,30 +81,6 @@ class page_upload_csv extends page {
 		}
 
 		redirect(new \moodle_url('/blocks/bayes/likelihoods.php', ['course' => $this->courseid, 'quiz' => $data->quiz]));
-	}
-}
-
-class form_upload_csv extends \moodleform {
-	protected function definition() {
-		global $DB;
-
-		$f = $this->_form;
-		$courseid = $this->_customdata->courseid;
-
-		$f->addElement('hidden', 'course', $courseid);
-		$f->setType('course', PARAM_INT);
-
-		$f->addElement('header', 'upload', bayes::str('upload'));
-
-		$f->addElement('filepicker', 'file', get_string('file'));
-		$f->addRule('file', null, 'required', null, 'client');
-
-		$quizzes = $DB->get_records_menu('quiz', ['course' => $this->_customdata->courseid],
-				'name', 'id, name');
-		$f->addElement('select', 'quiz', get_string('modulename', 'quiz'), $quizzes);
-		$f->addElement('select', 'encoding', bayes::str('encoding'), bayes::get_encodings());
-
-		$this->add_action_buttons(false, bayes::str('uploadcsv'));
 	}
 }
 

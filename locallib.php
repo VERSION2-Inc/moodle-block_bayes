@@ -184,3 +184,33 @@ class encoded_csv_writer extends \csv_export_writer {
 		parent::add_data($row);
 	}
 }
+
+class form_upload_csv extends \moodleform {
+	protected function definition() {
+		global $DB;
+
+		$f = $this->_form;
+		$courseid = $this->_customdata->courseid;
+
+		$f->addElement('hidden', 'course', $courseid);
+		$f->setType('course', PARAM_INT);
+
+		$f->addElement('header', 'upload', bayes::str('upload'));
+
+		$f->addElement('filepicker', 'file', get_string('file'));
+		$f->addRule('file', null, 'required', null, 'client');
+
+		if (!empty($this->_customdata->quizid)) {
+			$f->addElement('hidden', 'quiz', $this->_customdata->quizid);
+			$f->setType('quiz', PARAM_INT);
+		} else {
+			$quizzes = $DB->get_records_menu('quiz', ['course' => $this->_customdata->courseid],
+					'name', 'id, name');
+			$f->addElement('select', 'quiz', get_string('modulename', 'quiz'), $quizzes);
+		}
+
+		$f->addElement('select', 'encoding', bayes::str('encoding'), bayes::get_encodings());
+
+		$this->add_action_buttons(false, bayes::str('uploadcsv'));
+	}
+}

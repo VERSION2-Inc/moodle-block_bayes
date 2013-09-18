@@ -23,17 +23,33 @@ class page_likelihoods extends page {
 	private function view() {
 		global $DB;
 
+		$quizid = required_param('quiz', PARAM_INT);
+
 		$head = bayes::str('managelikelihoods');
 		$this->add_navbar($head);
 
 		echo $this->output->header();
 		echo $this->output->heading($head);
 
+		if ($message = optional_param('message', '', PARAM_ALPHA)) {
+			echo $this->output->notification(bayes::str($message), 'notifysuccess');
+		}
+
 		echo $this->output->box(get_string('modulename', 'quiz').': '
-				.$DB->get_field('quiz', 'name', ['id' => required_param('quiz', PARAM_INT)], MUST_EXIST));
+				.$DB->get_field('quiz', 'name', ['id' => $quizid], MUST_EXIST));
 
 		$this->editform->display();
 
+		echo '<hr>';
+		echo $this->output->heading(bayes::str('uploadcsv'));
+		$uploadcsvform = new form_upload_csv(
+				new \moodle_url('/blocks/bayes/uploadcsv.php'),
+				(object)['courseid' => $this->courseid, 'quizid' => $quizid]
+		);
+		$uploadcsvform->display();
+
+		echo '<hr>';
+		echo $this->output->heading(bayes::str('generateemptycsv'));
 		$generatecsvform = new form_generate_csv(
 				new \moodle_url('/blocks/bayes/generateemptycsv.php'),
 				(object)['course' => $this->courseid]);
@@ -55,14 +71,17 @@ class page_likelihoods extends page {
 				foreach ($group as $levelid => $newlikelihood) {
 					if (isset($likelihoods[$questionid][$levelid])
 						&& $likelihoods[$questionid][$levelid] != $newlikelihood) {
-// 						echo "$questionid:$levelid({$likelihoods[$questionid][$levelid]}) set to $newlikelihood<br>";
 						bayes::set_likelihood($questionid, $levelid, $newlikelihood);
 					}
 				}
 			}
 		}
 
-		redirect(new \moodle_url($this->url, ['quiz' => required_param('quiz', PARAM_INT)]));
+		redirect(new \moodle_url($this->url, [
+			'course' => required_param('course', PARAM_INT),
+			'quiz' => required_param('quiz', PARAM_INT),
+			'message' => 'likelihoodssaved'
+		]));
 	}
 }
 
@@ -70,8 +89,11 @@ class form_edit_likelihoods extends \moodleform {
 	protected function definition() {
 		$f = $this->_form;
 
+		$courseid = required_param('course', PARAM_INT);
 		$quizid = required_param('quiz', PARAM_INT);
 
+		$f->addElement('hidden', 'course', $courseid);
+		$f->setType('course', PARAM_INT);
 		$f->addElement('hidden', 'quiz', $quizid);
 		$f->setType('quiz', PARAM_INT);
 
@@ -83,9 +105,16 @@ class form_edit_likelihoods extends \moodleform {
 	}
 
 	private function add_question_groups($quizid) {
+		global $OUTPUT;
+
 		$f = $this->_form;
 
-		$f->addElement('static', 'a', 'b', 'c', 'd');
+		$levels = bayes::get_levels();
+		$header = '';
+		foreach ($levels as $level) {
+			$header .= $OUTPUT->container($level->name, 'levelheadercell');
+		}
+		$f->addElement('static', 'levels', '', $header);
 
 		$questionids = bayes::get_quiz_question_ids($quizid);
 
@@ -109,7 +138,8 @@ class form_edit_likelihoods extends \moodleform {
 		$fieldsize = strlen(bayes::format_float(0));
 		foreach ($levels as $level) {
 			$name = $level->id;
-			$group[] = $f->createElement('text', $name, '', ['size' => $fieldsize]);
+			$group[] = $f->createElement('text', $name, '',
+					['size' => $fieldsize, 'class' => 'levelinputcell']);
 			$uniquename = "{$groupname}[$name]";
 			$f->setType($uniquename, PARAM_TEXT);
 
