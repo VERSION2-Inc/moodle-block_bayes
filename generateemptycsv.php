@@ -12,7 +12,7 @@ class page_generate_empty_csv extends page {
 	private function output_csv() {
 		global $DB;
 
-		$form = new generate_csv_form();
+		$form = new form_generate_csv();
 		$data = $form->get_data();
 
 		$levels = $DB->get_records('block_bayes_levels');
