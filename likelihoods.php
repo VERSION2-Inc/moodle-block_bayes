@@ -34,6 +34,11 @@ class page_likelihoods extends page {
 
 		$this->editform->display();
 
+		$generatecsvform = new form_generate_csv(
+				new \moodle_url('/blocks/bayes/generateemptycsv.php'),
+				(object)['course' => $this->courseid]);
+		$generatecsvform->display();
+
 		echo $this->output->footer();
 	}
 
@@ -78,6 +83,10 @@ class form_edit_likelihoods extends \moodleform {
 	}
 
 	private function add_question_groups($quizid) {
+		$f = $this->_form;
+
+		$f->addElement('static', 'a', 'b', 'c', 'd');
+
 		$questionids = bayes::get_quiz_question_ids($quizid);
 
 		foreach ($questionids as $questionnum => $questionid) {
@@ -110,6 +119,27 @@ class form_edit_likelihoods extends \moodleform {
 		}
 
 		$f->addGroup($group, $groupname, ($questionnum + 1).": $question->name");
+	}
+}
+
+class form_generate_csv extends \moodleform {
+	protected function definition() {
+		$f = $this->_form;
+
+		$f->addElement('header', 'generateemptycsv', bayes::str('generateemptycsv'));
+
+		$vals = range(10, 200, 10);
+		$f->addElement('select', 'numquestions', bayes::str('numquestions'),
+				array_combine($vals,
+						array_map(
+								function ($val) {
+									return bayes::str('xquestions', $val);
+								}, $vals)));
+		$f->setDefault('numquestions', 100);
+
+		$f->addElement('select', 'encoding', bayes::str('encoding'), bayes::get_encodings());
+
+		$this->add_action_buttons(false, bayes::str('downloademptycsv'));
 	}
 }
 
