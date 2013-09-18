@@ -69,7 +69,8 @@ class page_likelihoods extends page {
 			if (preg_match('/^q_(\d+)$/', $key, $m)) {
 				$questionid = $m[1];
 				foreach ($group as $levelid => $newlikelihood) {
-					if (isset($likelihoods[$questionid][$levelid])
+					if (!isset($likelihoods[$questionid][$levelid])
+						|| isset($likelihoods[$questionid][$levelid])
 						&& $likelihoods[$questionid][$levelid] != $newlikelihood) {
 						bayes::set_likelihood($questionid, $levelid, $newlikelihood);
 					}
