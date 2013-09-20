@@ -54,7 +54,8 @@ if (optional_param('update', null, PARAM_TEXT) and confirm_sesskey()) {
             }
         }
     }
-    redirect($PAGE->url);
+//     redirect($PAGE->url);
+    redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
 }
 if ($delete = optional_param('delete', null, PARAM_INT) and confirm_sesskey()) {
     $DB->delete_records('block_bayes_levels', [ 'id' => $delete ]);

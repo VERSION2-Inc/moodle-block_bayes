@@ -14,6 +14,11 @@ class quiz_bayes_report extends quiz_attempts_report {
 		list($currentgroup, $students, $groupstudents, $allowed) =
 			$this->init('bayes', 'quiz_bayes_settings_form', $quiz, $cm, $course);
 
+		if (empty($allowed)) {
+			print_error('coursehasnouser', 'block_bayes');
+			return;
+		}
+
 		$options = new mod_quiz_attempts_report_options('bayes', $quiz, $cm, $course);
 
 		$questions = quiz_report_get_significant_questions($quiz);

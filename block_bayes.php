@@ -10,10 +10,18 @@ class block_bayes extends block_list {
 		$this->version = 2013072800;
 	}
 
+	/**
+	 *
+	 * @return boolean
+	 */
 	public function has_config() {
 		return true;
 	}
 
+	/**
+	 *
+	 * @return boolean
+	 */
 	public function applicable_formats() {
 		return [
 				'course' => true,
@@ -47,22 +55,18 @@ class block_bayes extends block_list {
 			'icons' => null
 		];
 
-		if (!has_capability('moodle/grade:viewall',
-				context_course::instance($this->page->course->id)))
-			return $this->content = '';
-
 		$editicon = $OUTPUT->pix_icon('i/edit', '', 'moodle', [
 				'class' => 'icon'
 		]);
 
-		$this->content->items[] = 	$OUTPUT->action_link(
+		$this->content->items[] = $OUTPUT->action_link(
 						new moodle_url('/blocks/bayes/editpriorprobability.php',
 								[
 										'id' => $this->page->course->id
 								]), $editicon . get_string('editpriorprobability', __CLASS__));
 		$this->content->icons[] = '';
 
-		$this->content->items[] = '尤度設定';
+		$this->content->items[] = bayes::str('managelikelihoods');
 		$this->content->icons[] = $OUTPUT->pix_icon('i/db', '');
 		$quizzes = $DB->get_records_menu('quiz', ['course' => $courseid],
 				'name', 'id, name');
@@ -70,22 +74,17 @@ class block_bayes extends block_list {
 				new moodle_url('/blocks/bayes/likelihoods.php', ['course' => $courseid]), 'quiz', $quizzes);
 		$this->content->icons[] = '';
 
-		$this->content->items[] = $OUTPUT->action_link(
-				new moodle_url('/blocks/bayes/uploadcsv.php', ['course' => $courseid]), bayes::str('uploadcsv'));
-		$this->content->icons[] = $OUTPUT->pix_icon('i/restore', '');
+// 		$this->content->items[] = $OUTPUT->action_link(
+// 				new moodle_url('/blocks/bayes/uploadcsv.php', ['course' => $courseid]), bayes::str('uploadcsv'));
+// 		$this->content->icons[] = $OUTPUT->pix_icon('i/restore', '');
 
-		$this->content->items[] = 'クラス分け計算';
+		$this->content->items[] = bayes::str('classify');
 		$this->content->icons[] = $OUTPUT->pix_icon('i/group', '');
 		$quizzes = $DB->get_records_menu('quiz', ['course' => $courseid],
 				'name', 'id, name');
 		$this->content->items[] = $OUTPUT->single_select(
 				new moodle_url('/blocks/bayes/quizresults.php', ['course' => $courseid]), 'quiz', $quizzes);
 
-		// 		$this->page->requires->css('/blocks/bayes/styles.css');
-
 		return $this->content;
-// 		return $this->content = (object)[
-// 				'text' => $html
-// 		];
 	}
 }

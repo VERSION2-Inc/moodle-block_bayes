@@ -78,11 +78,12 @@ class page_likelihoods extends page {
 			}
 		}
 
-		redirect(new \moodle_url($this->url, [
-			'course' => required_param('course', PARAM_INT),
-			'quiz' => required_param('quiz', PARAM_INT),
-			'message' => 'likelihoodssaved'
-		]));
+// 		redirect(new \moodle_url($this->url, [
+// 			'course' => required_param('course', PARAM_INT),
+// 			'quiz' => required_param('quiz', PARAM_INT),
+// 			'message' => 'likelihoodssaved'
+// 		]));
+		redirect(new \moodle_url('/course/view.php', ['id' => required_param('course', PARAM_INT)]));
 	}
 }
 
