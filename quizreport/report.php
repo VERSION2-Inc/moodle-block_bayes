@@ -11,11 +11,13 @@ require_once $CFG->dirroot . '/blocks/bayes/quizreport/bayes_table.php';
 
 class quiz_bayes_report extends quiz_attempts_report {
 	public function display($cm, $course, $quiz) {
+		global $OUTPUT;
+
 		list($currentgroup, $students, $groupstudents, $allowed) =
 			$this->init('bayes', 'quiz_bayes_settings_form', $quiz, $cm, $course);
 
-		if (empty($allowed)) {
-			print_error('coursehasnouser', 'block_bayes');
+		if (empty($students)) {
+			echo $OUTPUT->notification(get_string('nostudentsyet'));
 			return;
 		}
 
@@ -34,7 +36,7 @@ class quiz_bayes_report extends quiz_attempts_report {
 		$headers = [];
 
 		$columns[] = 'classify';
-		$headers[] = 'クラス分け';
+		$headers[] = get_string('classify', 'block_bayes');
 
 		$this->add_user_columns($table, $columns, $headers);
 		$this->add_state_column($columns, $headers);
