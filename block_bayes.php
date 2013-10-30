@@ -74,10 +74,6 @@ class block_bayes extends block_list {
 				new moodle_url('/blocks/bayes/likelihoods.php', ['course' => $courseid]), 'quiz', $quizzes);
 		$this->content->icons[] = '';
 
-// 		$this->content->items[] = $OUTPUT->action_link(
-// 				new moodle_url('/blocks/bayes/uploadcsv.php', ['course' => $courseid]), bayes::str('uploadcsv'));
-// 		$this->content->icons[] = $OUTPUT->pix_icon('i/restore', '');
-
 		$this->content->items[] = bayes::str('classify');
 		$this->content->icons[] = $OUTPUT->pix_icon('i/group', '');
 		$quizzes = $DB->get_records_menu('quiz', ['course' => $courseid],

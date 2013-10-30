@@ -27,7 +27,10 @@ class quiz_bayes_report extends quiz_attempts_report {
 
 		$table = new quiz_bayes_table('quiz-bayes-report', $quiz, $this->context, $this->qmsubselect,
 				$options, $groupstudents, $students, $questions, $options->get_url());
-		$table->define_baseurl('/blocks/bayes/quizresults.php');
+		$table->define_baseurl(new moodle_url('/blocks/bayes/quizresults.php', [
+				'course' => $course->id,
+				'quiz' => $quiz->id
+		]));
 
 		list($fields, $from, $where, $params) = $table->base_sql($allowed);
 		$table->set_sql($fields, $from, $where, $params);
