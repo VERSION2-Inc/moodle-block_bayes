@@ -34,59 +34,59 @@ class quiz_bayes_table extends quiz_attempts_report_table {
 	public function col_classify($attempt) {
 		global $OUTPUT;
 
+		$levels = bayes::get_levels();
+		$likelihoods = bayes::get_likelihoods();
+
+		$levelids = [];
+		foreach ($levels as $level) {
+			$levelids[] = $level->id;
+		}
+
+		$probrates = [];
+		foreach ($levelids as $levelid) {
+			$probrates[$levelid] = 1;
+		}
+
+		$steps = $this->lateststeps[$attempt->usageid];
+
+		$debug = [];
+
+		$debugrow = ['レベル'];
+		foreach ($levels as $level) {
+			$debugrow[] = $level->fullname;
+		}
+		$debug[] = $debugrow;
+
+		foreach ($steps as $questionnum => $step) {
+			$debugrow = [$questionnum];
+			foreach ($levels as $level) {
+				if ($step->fraction == 1) {
+					$probability = $level->probability;
+					$likelihood = $likelihoods[$step->questionid][$level->id];
+				} else {
+					$probability = 1 - $level->probability;
+					$likelihood = 1 - $likelihoods[$step->questionid][$level->id];
+				}
+				$probrates[$level->id] *= $probability * $likelihood;
+				$debugrow[] = $probability * $likelihood;
+			}
+			$debug[] = $debugrow;
+		}
+
+		$debugrow = ['積'];
+
+		foreach ($levels as $level) {
+			$debugrow[] = $probrates[$level->id];
+		}
+		$debug[] = $debugrow;
+
+		arsort($probrates);
+
+		$level = $levels[key($probrates)];
+
 		if ($this->is_downloading()) {
 			return $level->fullname;
 		} else {
-			$levels = bayes::get_levels();
-			$likelihoods = bayes::get_likelihoods();
-
-			$levelids = [];
-			foreach ($levels as $level) {
-				$levelids[] = $level->id;
-			}
-
-			$probrates = [];
-			foreach ($levelids as $levelid) {
-				$probrates[$levelid] = 1;
-			}
-
-			$steps = $this->lateststeps[$attempt->usageid];
-
-			$debug = [];
-
-			$debugrow = ['レベル'];
-			foreach ($levels as $level) {
-				$debugrow[] = $level->fullname;
-			}
-			$debug[] = $debugrow;
-
-			foreach ($steps as $questionnum => $step) {
-				$debugrow = [$questionnum];
-				foreach ($levels as $level) {
-					if ($step->fraction == 1) {
-						$probability = $level->probability;
-						$likelihood = $likelihoods[$step->questionid][$level->id];
-					} else {
-						$probability = 1 - $level->probability;
-						$likelihood = 1 - $likelihoods[$step->questionid][$level->id];
-					}
-					$probrates[$level->id] *= $probability * $likelihood;
-					$debugrow[] = $probability * $likelihood;
-				}
-				$debug[] = $debugrow;
-			}
-
-			$debugrow = ['積'];
-
-			foreach ($levels as $level) {
-				$debugrow[] = $probrates[$level->id];
-			}
-			$debug[] = $debugrow;
-
-			arsort($probrates);
-
-			$level = $levels[key($probrates)];
-
 			$table = new html_table();
 			$table->id = "debug_$attempt->usageid";
 			$table->attributes = ['style' => 'display: none'];
