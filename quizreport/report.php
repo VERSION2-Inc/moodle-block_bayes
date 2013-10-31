@@ -13,6 +13,9 @@ class quiz_bayes_report extends quiz_attempts_report {
 	public function display($cm, $course, $quiz) {
 		global $OUTPUT;
 
+// 		$data = $this->form->get_data();
+// 		var_dump($this->form);
+
 		list($currentgroup, $students, $groupstudents, $allowed) =
 			$this->init('bayes', 'quiz_bayes_settings_form', $quiz, $cm, $course);
 
@@ -22,11 +25,27 @@ class quiz_bayes_report extends quiz_attempts_report {
 		}
 
 		$options = new mod_quiz_attempts_report_options('bayes', $quiz, $cm, $course);
+		$options->process_settings_from_params();
 
 		$questions = quiz_report_get_significant_questions($quiz);
 
+		$courseshortname = format_string($course->shortname, true, [
+				'context' => context_course::instance($course->id)
+		]);
 		$table = new quiz_bayes_table('quiz-bayes-report', $quiz, $this->context, $this->qmsubselect,
 				$options, $groupstudents, $students, $questions, $options->get_url());
+		$filename = quiz_report_download_filename(get_string('classify', 'block_bayes'),
+				$courseshortname, $quiz->name);
+		$table->is_downloading($options->download, $filename, $courseshortname.' '.format_string($quiz->name, true));
+		$view = !$table->is_downloading();
+		if (!$view) {
+			raise_memory_limit(MEMORY_EXTRA);
+		}
+
+		if ($view) {
+			$this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
+		}
+
 		$table->define_baseurl(new moodle_url('/blocks/bayes/quizresults.php', [
 				'course' => $course->id,
 				'quiz' => $quiz->id
@@ -54,5 +73,7 @@ class quiz_bayes_report extends quiz_attempts_report {
 		$this->configure_user_columns($table);
 
 		$table->out(30, true);
+
+		return true;
 	}
 }

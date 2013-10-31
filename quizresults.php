@@ -19,20 +19,13 @@ class page_quiz_results extends page {
 		$head = bayes::str('quizresults');
 		$this->add_navbar($head);
 
-		echo $this->output->header();
-		echo $this->output->heading($head);
-
 		$quizid = required_param('quiz', PARAM_INT);
 		$quiz = $DB->get_record('quiz', ['id' => $quizid], '*', MUST_EXIST);
 		$cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
 		$course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
 
-		echo $this->output->box(get_string('modulename', 'quiz').': '.$quiz->name);
-
 		$report = new \quiz_bayes_report();
 		$report->display($cm, $course, $quiz);
-
-		echo $this->output->footer();
 	}
 }
 
