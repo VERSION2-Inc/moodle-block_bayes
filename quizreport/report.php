@@ -74,6 +74,8 @@ class quiz_bayes_report extends quiz_attempts_report {
 
 		$table->out(30, true);
 
-		return true;
+		if ($view) {
+			echo $OUTPUT->footer();
+		}
 	}
 }
