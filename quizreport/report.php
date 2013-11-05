@@ -13,9 +13,6 @@ class quiz_bayes_report extends quiz_attempts_report {
 	public function display($cm, $course, $quiz) {
 		global $OUTPUT;
 
-// 		$data = $this->form->get_data();
-// 		var_dump($this->form);
-
 		list($currentgroup, $students, $groupstudents, $allowed) =
 			$this->init('bayes', 'quiz_bayes_settings_form', $quiz, $cm, $course);
 

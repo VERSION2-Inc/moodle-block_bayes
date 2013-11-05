@@ -108,4 +108,26 @@ class quiz_bayes_table extends quiz_attempts_report_table {
 	protected function requires_latest_steps_loaded() {
 		return true;
 	}
+
+	/**
+	 *
+	 * @param string $column
+	 * @return int
+	 */
+	protected function is_latest_step_column($column) {
+		if (preg_match('/^question(\d+)$/', $column, $m)) {
+			return $m[1];
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 * @param int $slot
+	 * @param string $alias
+	 * @return string
+	 */
+	protected function get_required_latest_state_fields($slot, $alias) {
+		return "$alias.fraction * $alias.maxmark AS question$slot";
+	}
 }
