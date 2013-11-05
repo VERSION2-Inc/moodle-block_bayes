@@ -6,6 +6,8 @@ require_once $CFG->dirroot . '/mod/quiz/report/attemptsreport_table.php';
 use bayesns\bayes;
 
 class quiz_bayes_table extends quiz_attempts_report_table {
+	public $column_nosort = ['picture', 'classify'];
+
 	public function build_table() {
         $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
         parent::build_table();
