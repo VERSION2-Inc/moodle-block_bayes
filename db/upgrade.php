@@ -21,6 +21,7 @@ function xmldb_block_bayes_upgrade($oldversion) {
 		$table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 		$table->add_field('attempt', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 		$table->add_field('levelid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+		$table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
 		// Adding keys to table block_bayes_classification
 		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
